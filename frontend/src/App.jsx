@@ -29,7 +29,19 @@ const App = () => {
   console.log(allTask);
   useEffect(() => {
     getAlltask();
-  }, []);
+  }, [allTask]);
+
+  // delete data
+  let handleDelte = (id) => {
+    axios
+      .delete(`http://localhost:3000/todos/delete/${id}`)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <>
       {/* component */}
@@ -56,9 +68,12 @@ const App = () => {
               <div className="flex mb-4 items-center">
                 <p className="w-full text-grey-darkest">{item.task}</p>
                 <button className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green">
-                  Done
+                  Update
                 </button>
-                <button className="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-white hover:bg-red">
+                <button
+                  onClick={() => handleDelte(item._id)}
+                  className="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-black hover:bg-red"
+                >
                   Remove
                 </button>
               </div>
