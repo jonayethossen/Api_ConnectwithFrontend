@@ -1,6 +1,5 @@
-import { data } from "autoprefixer";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import axios, { all } from "axios";
+import { useEffect, useState } from "react";
 
 const App = () => {
   let [task, setTask] = useState("");
@@ -20,13 +19,15 @@ const App = () => {
     axios
       .get("http://localhost:3000/todos")
       .then((data) => {
-        setAllTask(data.data);
+        console.log(data.data?.data);
+        if (!data.data) return;
+        setAllTask(data.data?.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }
-  console.log(allTask);
+
   useEffect(() => {
     getAlltask();
   }, [allTask]);
@@ -36,12 +37,25 @@ const App = () => {
     axios
       .delete(`http://localhost:3000/todos/delete/${id}`)
       .then((data) => {
-        console.log(data);
+        console.log("Data edit successfull", data);
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  // UpdateData
+  // let handleUpdate = (id) => {
+  //   axios
+  //     .patch(`http://localhost:3000/todos/update/${id}`)
+  //     .then((data) => {
+  //       console.log(data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
   return (
     <>
       {/* component */}
@@ -49,35 +63,42 @@ const App = () => {
         <div className="bg-white rounded shadow p-6 m-4 w-full lg:w-3/4 lg:max-w-lg">
           <div className="mb-4">
             <h1 className="text-grey-darkest">Todo List</h1>
-            <div className="flex mt-4">
+            <div className="flex mt-4 ">
               <input
                 onChange={(e) => setTask(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 mr-4 text-grey-darker"
                 placeholder="Add Todo"
               />
+
               <button
                 onClick={handleSubmit}
-                className="flex-no-shrink p-2 border-2 rounded text-teal border-teal hover:text-teal-900 hover:bg-teal"
+                className="flex-no-shrink p-2 border-2 rounded text-teal border-teal  hover:text-teal-900 hover:bg-teal"
               >
                 Add
               </button>
             </div>
           </div>
           <div>
-            {allTask.map((item) => (
-              <div className="flex mb-4 items-center">
-                <p className="w-full text-grey-darkest">{item.task}</p>
-                <button className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green">
-                  Update
-                </button>
-                <button
-                  onClick={() => handleDelte(item._id)}
-                  className="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-black hover:bg-red"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+            {allTask &&
+              allTask.map((item, index) => (
+                <div className="flex mb-4 items-center" key={index}>
+                  <p className="w-full text-grey-darkest">{item.task}</p>
+                  <div className="flex">
+                    <button
+                      // onClick={() => handleDelte(item._id)}
+                      className="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-black hover:bg-red"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleDelte(item._id)}
+                      className="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-black hover:bg-red"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       </div>
